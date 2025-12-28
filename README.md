@@ -63,4 +63,4 @@ A Django-based environmental news site inspired by magazine layouts (NewScientis
 
 ---
 
-If you'd like I can add a demo article and screenshots to show the updated detail page layout and admin editor. Send a message and I'll create them and commit the sample content.
+
