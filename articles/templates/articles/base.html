@@ -4,8 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Eco-Tomchi{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/ui.css" rel="stylesheet">
+    <style>
+        /* Small enhancements for news-style cards */
+        .news-card img { transition: transform .45s ease; }
+        .news-card:hover img { transform: scale(1.05); }
+        .prose img { border-radius: 0.75rem; }
+        .article-blocks .md\\:w-1\/2 img { border-radius: 0.75rem; }
+    </style>
 </head>
 <body class="bg-slate-50 text-gray-800 flex flex-col min-h-screen">
 

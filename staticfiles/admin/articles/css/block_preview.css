@@ -1,0 +1,14 @@
+.block-preview{background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.04); margin-top:8px}
+.inline-group .fieldset { padding-bottom: 8px; }
+/* Make color input and selects visible and usable */
+.inline-group input[type=color] { height: 34px; width: 48px; padding: 0; border: 0; background: none; vertical-align: middle; }
+.inline-group select[name$="font_family"], .inline-group select[name$="font_size"] { min-width: 180px; }
+.inline-group .form-row { display:block; margin-bottom: 8px }
+.block-preview { font-size: 16px; }
+
+/* Swatches and presets */
+.color-palette { display:inline-flex; align-items:center }
+.color-swatch { cursor: pointer; }
+.font-presets .preset-btn { background:#f3f4f6; border:1px solid #e5e7eb; padding:4px 8px; border-radius:6px; cursor:pointer }
+.font-presets .preset-btn:hover { background:#eef2ff }
+.palette-help { margin-top:6px }

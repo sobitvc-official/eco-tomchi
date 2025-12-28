@@ -9,39 +9,105 @@
     </div>
 
     <article>
-        <header class="mb-8">
+        <header class="article-hero mb-12">
             {% if article.category %}
             <span class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest text-blue-600 uppercase bg-blue-50 rounded-full">
                 {{ article.category.name }}
             </span>
             {% endif %}
-            
-            <h1 class="text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4">
-                {{ article.title }}
-            </h1>
 
-            <div class="flex items-center text-gray-500 text-sm italic">
+            <h1 class="headline">{{ article.title }}</h1>
+
+            <div class="meta text-sm text-gray-500 mb-4">
                 <i class="far fa-calendar-alt mr-2"></i>
                 <span>Chop etilgan sana: {{ article.published_date|date:"d-F, Y" }}</span>
             </div>
+
+            {% comment %} Lead: prefer first text block, fallback to excerpt/content {% endcomment %}
+            {% with lead_block=article.first_text_block %}
+              {% if lead_block and lead_block.text %}
+                <p class="lead">{{ lead_block.text|striptags|truncatewords:40 }}</p>
+              {% elif article.excerpt %}
+                <p class="lead">{{ article.excerpt|truncatewords:40 }}</p>
+              {% endif %}
+            {% endwith %}
+
+            {% comment %} Hero image (featured image or first image block) {% endcomment %}
+            <div class="mt-8 rounded-3xl overflow-hidden shadow-2xl bg-gray-100 article-hero-media">
+                {% if article.featured_image %}
+                    <img src="{{ article.featured_image.url }}" class="w-full h-auto object-cover" alt="{{ article.title }}">
+                {% elif article.first_image_block %}
+                    {% with img=article.first_image_block %}
+                      {% if img.image %}
+                        <img src="{{ img.image.url }}" class="w-full h-auto object-cover" alt="{{ img.image_alt }}">
+                      {% elif img.image_url %}
+                        <img src="{{ img.image_url }}" class="w-full h-auto object-cover" alt="{{ img.image_alt }}">
+                      {% endif %}
+                    {% endwith %}
+                {% else %}
+                    <div class="w-full h-52 md:h-72 flex flex-col items-center justify-center text-blue-300">
+                        <i class="fas fa-droplet text-6xl mb-4"></i>
+                        <p class="text-gray-400">Rasm mavjud emas</p>
+                    </div>
+                {% endif %}
+            </div>
         </header>
 
-        <div class="mb-10 rounded-3xl overflow-hidden shadow-2xl bg-gray-100">
-            {% if article.image_url %}
-                <img src="{{ article.image_url }}" class="w-full h-auto max-h-[500px] object-cover" alt="{{ article.title }}">
-            {% elif article.featured_image %}
-                <img src="{{ article.featured_image.url }}" class="w-full h-auto max-h-[500px] object-cover" alt="{{ article.title }}">
+        <div class="article-blocks">
+            {% if article.blocks.exists %}
+                {% for block in article.blocks.all %}
+                    {% if block.block_type == 'image' %}
+                        <div class="article-block mb-12 {% if forloop.counter0|divisibleby:2 %}layout-left{% else %}layout-right{% endif %}">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                                {% if forloop.counter0|divisibleby:2 %}
+                                  <div class="image-col md:h-72 overflow-hidden rounded-2xl shadow-md">
+                                    {% if block.image %}
+                                        <img src="{{ block.image.url }}" alt="{{ block.image_alt }}" class="w-full h-full object-cover">
+                                    {% elif block.image_url %}
+                                        <img src="{{ block.image_url }}" alt="{{ block.image_alt }}" class="w-full h-full object-cover">
+                                    {% endif %}
+                                  </div>
+
+                                  <div class="text-col md:flex md:items-center">
+                                    <div class="prose prose-lg w-full" style="color: {{ block.text_color }}; font-family: {{ block.font_family }}; font-size: {{ block.font_size }};">
+                                        {{ block.text|safe }}
+                                    </div>
+                                  </div>
+                                {% else %}
+                                  <div class="text-col md:flex md:items-center order-1 md:order-none">
+                                    <div class="prose prose-lg w-full" style="color: {{ block.text_color }}; font-family: {{ block.font_family }}; font-size: {{ block.font_size }};">
+                                        {{ block.text|safe }}
+                                    </div>
+                                  </div>
+
+                                  <div class="image-col md:h-72 overflow-hidden rounded-2xl shadow-md">
+                                    {% if block.image %}
+                                        <img src="{{ block.image.url }}" alt="{{ block.image_alt }}" class="w-full h-full object-cover">
+                                    {% elif block.image_url %}
+                                        <img src="{{ block.image_url }}" alt="{{ block.image_alt }}" class="w-full h-full object-cover">
+                                    {% endif %}
+                                  </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% elif block.block_type == 'text' %}
+                        <div class="article-text mb-10">
+                            <div class="prose prose-xl text-gray-700 leading-relaxed mx-auto" style="color: {{ block.text_color }}; font-family: {{ block.font_family }}; font-size: {{ block.font_size }}; max-width: var(--max-content-width);">
+                                {{ block.text|safe }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
+                        {{ article.content|linebreaks }}
+                    </div>
+                {% endfor %}
             {% else %}
-                <div class="w-full h-64 flex flex-col items-center justify-center text-blue-300">
-                    <i class="fas fa-droplet text-6xl mb-4"></i>
-                    <p class="text-gray-400">Rasm mavjud emas</p>
+                <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
+                    {{ article.content|linebreaks }}
                 </div>
             {% endif %}
-        </div>
-
-        <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
-            {{ article.content|linebreaks }}
-        </div>
+        </div> 
 
         <footer class="mt-16 pt-8 border-t border-gray-100">
             <div class="bg-blue-50 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between">

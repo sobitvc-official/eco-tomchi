@@ -11,7 +11,8 @@ def article_list(request):
     })
 
 def article_detail(request, slug):
-    article = get_object_or_404(Article, slug=slug)
+    # Prefetch article blocks to render block-based content efficiently
+    article = get_object_or_404(Article.objects.prefetch_related('blocks'), slug=slug)
     categories = Category.objects.all()
     return render(request, 'articles/detail.html', {
         'article': article, 
